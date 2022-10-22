@@ -1,3 +1,4 @@
+from xml.etree.ElementPath import prepare_predicate
 import numpy as np
 import sys
 
@@ -17,9 +18,11 @@ class LinearRegression(object):
         """
         ##
         ###
-        #### YOUR CODE HERE! 
+        #### YOUR CODE HERE! DONE
         ###
         ##
+        self.task_kind = 'regression'
+        self.set_arguments(*args, **kwargs)
 
     def set_arguments(self, *args, **kwargs):
         """
@@ -31,9 +34,17 @@ class LinearRegression(object):
 
         ##
         ###
-        #### YOUR CODE HERE! 
+        #### YOUR CODE HERE! DONE
         ###
         ##
+        if "lmda" in kwargs:
+            self.lmda = kwargs["lmda"]
+        # if not, then check if args is a list with size bigger than 0.
+        elif len(args) >0 :
+            self.lmda = args[0]
+        # if there were no args or kwargs passed, we set the lmda to 1 (default value).
+        else:
+            self.lmda = 0
     
 
     def fit(self, training_data, training_labels):
@@ -48,11 +59,13 @@ class LinearRegression(object):
         
         ##
         ###
-        #### YOUR CODE HERE! 
+        #### YOUR CODE HERE! Implement ridge regression here
         ###
         ##
 
-        return pred_regression_targets
+        self.w = np.linalg.pinv(training_data) @ training_labels
+
+        return self.predict(self, training_data)
 
     def predict(self, test_data):
         """
@@ -66,8 +79,8 @@ class LinearRegression(object):
 
         ##
         ###
-        #### YOUR CODE HERE! 
+        #### YOUR CODE HERE! DONE
         ###
         ##
 
-        return pred_regression_targets
+        return test_data @ self.w
