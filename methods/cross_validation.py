@@ -1,6 +1,7 @@
 import numpy as np
 from metrics import accuracy_fn, mse_fn, macrof1_fn
 
+
 def splitting_fn(data, labels, indices, fold_size, fold):
     """
         Function to split the data into training and validation folds.
@@ -14,14 +15,15 @@ def splitting_fn(data, labels, indices, fold_size, fold):
         Returns:
             train_data, train_label, val_data, val_label (np. arrays): split training and validation sets
     """
-                
+
     ##
     ###
-    #### YOUR CODE HERE! 
+    # YOUR CODE HERE!
     ###
     ##
 
     return train_data, train_label, val_data, val_label
+
 
 def cross_validation(method_obj=None, search_arg_name=None, search_arg_vals=[], data=None, labels=None, k_fold=4):
     """
@@ -42,8 +44,8 @@ def cross_validation(method_obj=None, search_arg_name=None, search_arg_vals=[], 
             best_hyperparam (float): best hyper-parameter value, as found by cross-validation
             best_acc (float): best metric, reached using best_hyperparam
     """
-    ## choose the metric and operation to find best params based on the metric depending upon the
-    ## kind of task.
+    # choose the metric and operation to find best params based on the metric depending upon the
+    # kind of task.
     metric = mse_fn if method_obj.task_kind == 'regression' else macrof1_fn
     find_param_ops = np.argmin if method_obj.task_kind == 'regression' else np.argmax
 
@@ -55,37 +57,29 @@ def cross_validation(method_obj=None, search_arg_name=None, search_arg_vals=[], 
     acc_list1 = []
     for arg in search_arg_vals:
         arg_dict = {search_arg_name: arg}
-        # this is just a way of giving an argument 
+        # this is just a way of giving an argument
         # (example: for DummyClassifier, this is "dummy_arg":1)
         method_obj.set_arguments(**arg_dict)
 
         acc_list2 = []
         for fold in range(k_fold):
-            
-                    
             ##
             ###
-            #### YOUR CODE HERE! 
+            # YOUR CODE HERE!
             ###
             ##
-        
-         
-        ##
-        ###
-        #### YOUR CODE HERE! 
-        ###
-        ##
-     
-    ##
-    ###
-    #### YOUR CODE HERE! 
-    ###
-    ##
+            pass
 
+        ##
+        ###
+        # YOUR CODE HERE!
+        ###
+        ##
+
+    ##
+    ###
+    # YOUR CODE HERE!
+    ###
+    ##
 
     return best_hyperparam, best_acc
-
-        
-
-
-    
