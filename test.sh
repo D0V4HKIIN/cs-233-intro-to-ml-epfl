@@ -1,0 +1,1 @@
+python test/test_ms1.py -p .
