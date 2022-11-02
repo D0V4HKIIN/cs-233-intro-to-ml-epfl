@@ -93,6 +93,10 @@ class LogisticRegression(object):
 
             gradient = self.gradient_logistic(data, labels)
             self.w = self.w - self.lr * gradient
+
+            predictions = self.logistic_regression_classify(data)
+            if self.accuracy_fn(labels, predictions) == 1:
+                break
         
         return self.w
 
@@ -102,6 +106,10 @@ class LogisticRegression(object):
 
             gradient = self.gradient_logistic_multi(data, labels)
             self.w = self.w - self.lr * gradient
+
+            predictions = self.logistic_regression_classify_multi(data)
+            if self.accuracy_fn(np.argmax(labels, axis = 1), predictions) == 1:
+                break
 
         return self.w
     
@@ -143,8 +151,16 @@ class LogisticRegression(object):
     def logistic_regression_classify_multi(self, data):
 
         predictions = self.f_softmax(data)
+        predictions = np.argmax(predictions, axis = 1)
         
         return predictions
+
+
+
+    def accuracy_fn(self, labels_gt, labels_pred):
+
+        acc = np.sum(labels_gt == labels_pred) / labels_gt.shape[0]
+        return acc
 
 
 
