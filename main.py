@@ -103,6 +103,15 @@ def main(args):
         ###
         ##
 
+        def append_bias_term(X_train):
+
+            ones_column = np.ones((X_train.shape[0], 1))
+            X_train_bias = np.concatenate((X_train, ones_column), axis=1)
+            return X_train_bias
+
+        train_data = append_bias_term(train_data)
+        test_data = append_bias_term(test_data)
+
         # cross validation (MS1)
         if args.use_cross_validation:
             print("Using cross validation")
