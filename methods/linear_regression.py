@@ -81,7 +81,7 @@ class LinearRegression(object):
 
         # initialize the weights
         self.w = np.random.normal(
-            0, 1e-1, (X_train.shape[1], y_train.shape[1]))
+            0, 1e-1, (X_train.shape[1], y_train.reshape(y_train.shape[0], -1).shape[1]))
 
         # iterate a given number of epochs over the training data
         for epoch in range(epochs):
