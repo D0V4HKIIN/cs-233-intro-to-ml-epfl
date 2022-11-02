@@ -85,7 +85,6 @@ class LinearRegression(object):
 
         # iterate a given number of epochs over the training data
         for epoch in range(epochs):
-
             self.w = self.w - lr * self.find_gradient(X_train, y_train)
 
         return self.w

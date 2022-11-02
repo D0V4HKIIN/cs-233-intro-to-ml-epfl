@@ -69,20 +69,19 @@ class LogisticRegression(object):
         # YOUR CODE HERE!
         ###
         ##
-        self.w = np.random.normal(0., 0.1, [training_data.shape[1], ])
-        for it in range(self.max_iters):
-            # write your code here: find gradient and do a gradient step
-            gradient = self.gradient_logistic(
-                training_data, training_labels)
-            self.w = self.w - self.lr * gradient
-            ##################################
-
-            # if we reach 100% accuracy, we can stop training immediately
-            # predictions = self.predict(training_data, self.w)
-            # if accuracy_fn(training_labels, predictions) == 1:
-            #     break
+        self.w = self.logistic_regression_train(training_data, training_labels)
 
         return self.predict(training_data)
+    
+    def logistic_regression_train(self, data, labels):
+        self.w = np.random.normal(0., 0.1, [data.shape[1], labels.shape[1]])
+
+        for it in range(self.max_iters):
+            gradient = self.gradient_logistic(data, labels)
+
+            self.w = self.w - self.lr * gradient
+        
+        return self.w
 
     def gradient_logistic(self, data, labels):
         return data.T @ (self.sigmoid(data @ self.w) - labels)
