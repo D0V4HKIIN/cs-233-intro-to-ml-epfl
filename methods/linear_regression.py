@@ -5,7 +5,7 @@ import sys
 
 class LinearRegression(object):
     """
-        Linear regressor object. 
+        Linear regressor object.
         Note: This class will implement BOTH linear regression and ridge regression.
         Recall that linear regression is just ridge regression with lambda=0.
         Feel free to add more functions to this class if you need.
@@ -42,12 +42,14 @@ class LinearRegression(object):
         if "lmda" in kwargs:
             self.lmda = kwargs["lmda"]
         # if not, then check if args is a list with size bigger than 0.
+        # kinda weird
         elif len(args) > 0:
             self.lmda = args[0]
         # if there were no args or kwargs passed, we set the lmda to 1 (default value).
         else:
             print("using default values in linear regression")
             self.lmda = 0
+        print("using lambda:", self.lmda)
 
     def fit(self, training_data, training_labels):
         """
@@ -66,8 +68,11 @@ class LinearRegression(object):
         ##
 
         # random ridge stuff idk
-        self.w = np.linalg.inv(training_data.T @ training_data +
-                               self.lmda * np.identity(training_data.shape[1])) @ training_data.T @ training_labels
+        if self.lmda == 0:
+            self.w = np.linalg.pinv(training_data) @ training_labels
+        else:
+            self.w = np.linalg.inv(training_data.T @ training_data +
+                                   self.lmda * np.identity(training_data.shape[1])) @ training_data.T @ training_labels
 
         return self.predict(training_data)
 

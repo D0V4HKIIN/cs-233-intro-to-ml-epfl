@@ -53,6 +53,7 @@ class LogisticRegression(object):
             print("using default values in logistic regression")
             self.lr = 1e-3
             self.max_iters = 500
+        print("using lr", self.lr, "and max_iters", self.max_iters)
 
     def fit(self, training_data, training_labels):
         """

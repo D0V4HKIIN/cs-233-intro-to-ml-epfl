@@ -96,6 +96,20 @@ def main(args):
             search_arg_vals = [1, 2, 3]
             train_labels = train_regression_target
             search_arg_name = "dummy_arg"
+        elif args.method_name == 'ridge_regression':
+            method_obj = LinearRegression(args.ridge_regression_lmda)
+            # different lamda's which ones should we choose
+            search_arg_vals = [0, 1e-3, 1e-2, 1e-1, 1, 10]
+            search_arg_name = "lmda"
+            # human poses
+            train_labels = train_regression_target
+        elif args.method_name == 'logistic_regression':
+            method_obj = LogisticRegression(args.lr, args.max_iters)
+            # different lr's which ones should we choose
+            search_arg_vals = [1e-4, 1e-3, 1e-2, 1e-1, 1, 3, 10]
+            # human poses
+            train_labels = train_regression_target
+            search_arg_name = "lr"
 
         ##
         ###
@@ -113,6 +127,15 @@ def main(args):
         test_data = append_bias_term(test_data)
 
         # cross validation (MS1)
+
+        # just saw that you called on discord
+
+        # but we also pass all the tests, right??
+        # yes
+        # we just implemented cross validation
+        # OH and now classification accuracy should be greater and we are just comparing results??
+        # Now we need to make the main function work on our own classes, not on the dummy methods
+        # we got liniear regression to work and logistic too
         if args.use_cross_validation:
             print("Using cross validation")
             best_arg, best_val_acc = cross_validation(
