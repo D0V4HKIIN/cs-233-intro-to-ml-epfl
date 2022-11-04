@@ -11,8 +11,6 @@ class LinearRegression(object):
         Feel free to add more functions to this class if you need.
         But make sure that __init__, set_arguments, fit and predict work correctly.
     """
-    const_epochs = 30000
-    const_lr = 1e-3
 
     def __init__(self, *args, **kwargs):
         """
@@ -68,33 +66,10 @@ class LinearRegression(object):
         ##
 
         # random ridge stuff idk
-        # self.w = np.linalg.inv(training_data.T @ training_data +
-        #                       self.lmda * np.identity(training_data.shape[1])) @ training_data.T @ training_labels
-        # self.w = np.linalg.pinv(training_data) @ training_labels
-
-        self.w = self.get_w_numerical(
-            training_data, training_labels, self.const_epochs, self.const_lr)
+        self.w = np.linalg.inv(training_data.T @ training_data +
+                               self.lmda * np.identity(training_data.shape[1])) @ training_data.T @ training_labels
 
         return self.predict(training_data)
-
-    def get_w_numerical(self, X_train, y_train, epochs, lr):
-
-        # initialize the weights
-        self.w = np.random.normal(
-            0, 1e-1, (X_train.shape[1], y_train.reshape(y_train.shape[0], -1).shape[1]))
-
-        # iterate a given number of epochs over the training data
-        for epoch in range(epochs):
-            self.w = self.w - lr * self.find_gradient(X_train, y_train)
-
-        return self.w
-
-    def find_gradient(self, X, y):
-
-        N = X.shape[0]
-
-        grad = (2 / N) * ((X @ self.w - y).T @ X).T + 2 * self.lmda * self.w
-        return grad
 
     def predict(self, test_data):
         """

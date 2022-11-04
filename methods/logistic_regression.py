@@ -22,7 +22,7 @@ class LogisticRegression(object):
         # YOUR CODE HERE!
         ###
         ##
-        self.task_kind = 'regression'
+        self.task_kind = 'classification'
         self.set_arguments(*args, **kwargs)
 
     def set_arguments(self, *args, **kwargs):
@@ -54,15 +54,14 @@ class LogisticRegression(object):
             self.lr = 1e-3
             self.max_iters = 500
 
-
     def fit(self, training_data, training_labels):
         """
             Trains the model, returns predicted labels for training data.
             Arguments:
                 training_data (np.array): training data of shape (N,D)
-                training_labels (np.array): regression target of shape (N,regression_target_size)
+                training_labels (np.array): regression target of shape (N,)
             Returns:
-                pred_labels (np.array): target of shape (N,regression_target_size)
+                pred_labels (np.array): target of shape (N,)
         """
 
         ##
@@ -71,22 +70,23 @@ class LogisticRegression(object):
         ###
         ##
 
-        num_classes = training_labels.reshape(training_labels.shape[0], -1).shape[1]
+        num_classes = training_labels.reshape(
+            training_labels.shape[0], -1).shape[1]
 
         self.isBinary = (num_classes == 1)
 
         if self.isBinary:
             self.w = np.random.normal(0., 0.1, [training_data.shape[1]])
-            self.w = self.logistic_regression_train(training_data, training_labels)
+            self.w = self.logistic_regression_train(
+                training_data, training_labels)
         else:
-            self.w = np.random.normal(0., 0.1, (training_data.shape[1], num_classes))
-            self.w = self.logistic_regression_train_multi(training_data, training_labels)
-        
+            self.w = np.random.normal(
+                0., 0.1, (training_data.shape[1], num_classes))
+            self.w = self.logistic_regression_train_multi(
+                training_data, training_labels)
 
         return self.predict(training_data)
 
-    
-    
     def logistic_regression_train(self, data, labels):
 
         for it in range(self.max_iters):
@@ -97,7 +97,7 @@ class LogisticRegression(object):
             predictions = self.logistic_regression_classify(data)
             if self.accuracy_fn(labels, predictions) == 1:
                 break
-        
+
         return self.w
 
     def logistic_regression_train_multi(self, data, labels):
@@ -108,38 +108,32 @@ class LogisticRegression(object):
             self.w = self.w - self.lr * gradient
 
             predictions = self.logistic_regression_classify_multi(data)
-            if self.accuracy_fn(np.argmax(labels, axis = 1), predictions) == 1:
+            if self.accuracy_fn(np.argmax(labels, axis=1), predictions) == 1:
                 break
 
         return self.w
-    
-
 
     def gradient_logistic(self, data, labels):
         return data.T @ (self.sigmoid(data @ self.w) - labels)
 
-
     def gradient_logistic_multi(self, data, labels):
-    
+
         grad_w = data.T @ (self.f_softmax(data) - labels)
         return grad_w
-    
-
 
     def sigmoid(self, t):
         divider = 1 + np.exp(-t)
         return 1/divider
-    
+
     def f_softmax(self, data):
-   
+
         res = np.zeros((data.shape[0], self.w.shape[1]))
 
         for j in range(self.w.shape[1]):
-            res[::, j] = (np.exp(data @ self.w[::, j]) / np.sum(np.exp(data @ self.w), axis = 1)).T
-                
-        return res
-    
+            res[::, j] = (np.exp(data @ self.w[::, j]) /
+                          np.sum(np.exp(data @ self.w), axis=1)).T
 
+        return res
 
     def logistic_regression_classify(self, data):
 
@@ -147,22 +141,18 @@ class LogisticRegression(object):
         predictions[predictions < 0.5] = 0
         predictions[predictions >= 0.5] = 1
         return predictions
-    
+
     def logistic_regression_classify_multi(self, data):
 
         predictions = self.f_softmax(data)
-        predictions = np.argmax(predictions, axis = 1)
-        
+        predictions = np.argmax(predictions, axis=1)
+
         return predictions
-
-
 
     def accuracy_fn(self, labels_gt, labels_pred):
 
         acc = np.sum(labels_gt == labels_pred) / labels_gt.shape[0]
         return acc
-
-
 
     def predict(self, test_data):
         """

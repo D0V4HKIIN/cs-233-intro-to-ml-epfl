@@ -22,6 +22,17 @@ def splitting_fn(data, labels, indices, fold_size, fold):
     ###
     ##
 
+    # validation indicies of length fold_size
+    # min is to not go outside of the array
+    val_indices = indices[(fold * fold_size): min(((fold + 1) * fold_size), data.shape[0] - 1)]
+    # train indicies. The rest
+    train_indices = np.setdiff1d(indices, val_indices)
+
+    train_data = data[train_indices]
+    train_label = labels[train_indices]
+    val_data = data[val_indices]
+    val_label = labels[val_indices]
+
     return train_data, train_label, val_data, val_label
 
 
@@ -54,6 +65,7 @@ def cross_validation(method_obj=None, search_arg_name=None, search_arg_vals=[], 
     np.random.shuffle(indices)
     fold_size = N//k_fold
 
+    # mean accuracy for every input value
     acc_list1 = []
     for arg in search_arg_vals:
         arg_dict = {search_arg_name: arg}
@@ -61,6 +73,7 @@ def cross_validation(method_obj=None, search_arg_name=None, search_arg_vals=[], 
         # (example: for DummyClassifier, this is "dummy_arg":1)
         method_obj.set_arguments(**arg_dict)
 
+        # accuracy for every validation fold
         acc_list2 = []
         for fold in range(k_fold):
             ##
@@ -68,18 +81,26 @@ def cross_validation(method_obj=None, search_arg_name=None, search_arg_vals=[], 
             # YOUR CODE HERE!
             ###
             ##
-            pass
+            train_data, train_label, val_data, val_label = splitting_fn(
+                data, labels, indices, fold_size, fold)
+            method_obj.fit(train_data, train_label)
+            predicted_data = method_obj.predict(val_data)
+            acc_list2.append(metric(predicted_data, val_label))
 
         ##
         ###
         # YOUR CODE HERE!
         ###
         ##
+        acc_list1.append(np.mean(acc_list2))
 
     ##
     ###
     # YOUR CODE HERE!
     ###
     ##
+    best_param = find_param_ops(acc_list1)
+    best_hyperparam = search_arg_vals[best_param]
+    best_acc = acc_list1[best_param]
 
     return best_hyperparam, best_acc
