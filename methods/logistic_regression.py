@@ -64,7 +64,8 @@ class LogisticRegression(object):
             Trains the model, returns predicted labels for training data.
             Arguments:
                 training_data (np.array): training data of shape (N,D)
-                training_labels (np.array): regression target of shape (N,regression_target_size)
+                corrected this line according to https://edstem.org/eu/courses/171/discussion/4985
+                training_labels (np.array): regression target of shape (N,)
             Returns:
                 pred_labels (np.array): target of shape (N, )
         """
@@ -75,20 +76,33 @@ class LogisticRegression(object):
         ###
         ##
 
+        # training labels are not in one hot representation according to this: https://edstem.org/eu/courses/171/discussion/5815
+        # convert training_labels to one_hot
+
+        print(training_labels)
+        print(training_labels.shape)
+
+        one_hot_training_label = label_to_onehot(training_labels)
+        print(one_hot_training_label)
+
         num_classes = training_labels.reshape(
             training_labels.shape[0], -1).shape[1]
 
         self.isBinary = (num_classes == 1)
 
+        self.isBinary = False
+
         if self.isBinary:
-            self.w = np.random.normal(0., 0.1, [training_data.shape[1]])
+            self.w = np.random.normal(
+                0., 0.1, [training_data.shape[1]])
             self.w = self.logistic_regression_train(
                 training_data, training_labels)
         else:
+            print("multi")
             self.w = np.random.normal(
-                0., 0.1, (training_data.shape[1], num_classes))
+                0., 0.1, (training_data.shape[1], num_classes))  # .astype(np.float64)
             self.w = self.logistic_regression_train_multi(
-                training_data, training_labels)
+                training_data, one_hot_training_label)
 
         return self.predict(training_data)
 
@@ -109,14 +123,17 @@ class LogisticRegression(object):
 
         for it in range(self.max_iters):
             print(it)
-
             gradient = self.gradient_logistic_multi(data, labels)
             self.w = self.w - self.lr * gradient
+
+            """
+            # uses softmax which is slow
             print("predict")
             predictions = self.logistic_regression_classify_multi(data)
+            print(self.accuracy_fn(np.argmax(labels, axis=1), predictions))
             if self.accuracy_fn(np.argmax(labels, axis=1), predictions) == 1:
                 break
-
+            """
         return self.w
 
     def gradient_logistic(self, data, labels):
@@ -134,7 +151,6 @@ class LogisticRegression(object):
     def f_softmax(self, data):
         print("softmax")
 
-        exp = np.exp(data @ self.w)
         """
     res = np.zeros((data.shape[0], self.w.shape[1]))
     denominator = np.sum(np.exp(data @ self.w), axis=1).T
@@ -143,20 +159,22 @@ class LogisticRegression(object):
         print(j)
         res[::, j] = np.exp(data @ self.w[::, j]) / denominator
 		"""
+        exp = np.exp(data @ self.w)
         return np.divide(exp, np.sum(exp, axis=1, keepdims=True))
 
     def logistic_regression_classify(self, data):
-
-        predictions = self.sigmoid(data @ self.w)
-        predictions[predictions < 0.5] = 0
-        predictions[predictions >= 0.5] = 1
+        predictions = np.round(self.sigmoid(data @ self.w))
         return predictions
 
     def logistic_regression_classify_multi(self, data):
 
-        predictions = self.f_softmax(data)
-        predictions = np.argmax(predictions)
+        # predictions = self.f_softmax(data)
+        # predictions = np.argmax(predictions)
         # predictions = np.argmax(predictions, axis=1)
+
+        # softmax is the prediction? then converted to label?
+        predictions = np.argmax(self.f_softmax(data), axis=1)
+        print(predictions.shape)
 
         return predictions
 

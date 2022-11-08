@@ -108,7 +108,7 @@ def main(args):
             # different lr's which ones should we choose
             search_arg_vals = [1e-2, 1]
             # human poses
-            train_labels = train_regression_target
+            # train_labels = train_regression_target
             search_arg_name = "lr"
 
         ##

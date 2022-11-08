@@ -50,7 +50,6 @@ class LinearRegression(object):
             print("using default values in linear regression")
             self.lmda = 0
 
-            
     def fit(self, training_data, training_labels):
         """
             Trains the model, returns predicted labels for training data.

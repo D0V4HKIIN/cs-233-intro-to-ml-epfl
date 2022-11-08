@@ -1,1 +1,1 @@
-python main.py --dataset="h36m" --path_to_data=. --method_name="logistic_regression" --ridge_regression_lmda=0.0 # --use_cross_validation
+python main.py --dataset="h36m" --path_to_data=. --method_name="logistic_regression" --ridge_regression_lmda=0.0 --lr 0.000001 #--max_iters 10000 # --use_cross_validation
