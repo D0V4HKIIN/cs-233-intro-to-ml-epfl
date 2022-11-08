@@ -59,6 +59,8 @@ class LogisticRegression(object):
         else:
             self.max_iters = 500
 
+        self.k = 4
+
 
     def fit(self, training_data, training_labels):
         """
@@ -76,86 +78,42 @@ class LogisticRegression(object):
         ###
         ##
 
-        num_classes = training_labels.reshape(training_labels.shape[0], -1).shape[1]
-
-        self.isBinary = (num_classes == 1)
-
-        if self.isBinary:
-            self.w = np.random.normal(0., 0.1, [training_data.shape[1]])
-            self.logistic_regression_train(training_data, training_labels)
-        else:
-            self.w = np.random.normal(0., 0.1, (training_data.shape[1], num_classes))
-            self.logistic_regression_train_multi(training_data, training_labels)
-        
-        print("Data shape:", training_data.shape)
-        print("Labels shape:", training_labels.shape)
-        print("W shape:", self.w.shape)
+        self.logistic_regression_train_multi(training_data, training_labels)
 
         return self.predict(training_data)
 
     
-    
-    def logistic_regression_train(self, data, labels):
-
-        for it in range(self.max_iters):
-
-            gradient = self.gradient_logistic(data, labels)
-            self.w -= self.lr * gradient
-
-            predictions = self.logistic_regression_classify(data)
-            if self.accuracy_fn(labels, predictions) == 1:
-                break
-        
-        return self.w
-
     def logistic_regression_train_multi(self, data, labels):
 
+        self.w = np.random.normal(0., 0.1, (data.shape[1], self.k))
+        
         for it in range(self.max_iters):
 
-            gradient = self.gradient_logistic_multi(data, labels)
+            gradient = self.gradient_logistic_multi(data, label_to_onehot(labels))
             self.w -= self.lr * gradient
 
             predictions = self.logistic_regression_classify_multi(data)
-            if self.accuracy_fn(np.argmax(labels, axis = 1), predictions) == 1:
+            if self.accuracy_fn(labels, predictions) == 1:
                 break
 
         return self.w
     
-
-
-    def gradient_logistic(self, data, labels):
-        return data.T @ (self.sigmoid(data @ self.w) - labels)
-
 
     def gradient_logistic_multi(self, data, labels):
     
         grad_w = data.T @ (self.f_softmax(data) - labels)
         return grad_w
-    
 
-
-    def sigmoid(self, t):
-        denominator = 1 + np.exp(-t)
-        return 1 / denominator
     
     def f_softmax(self, data):
 
         auxMatrix = np.exp(data @ self.w)
-        denominator = np.sum(auxMatrix, axis = 1, keepdims = True)
     
-        res = np.divide(auxMatrix, denominator)
+        res = np.divide(auxMatrix, np.sum(auxMatrix, axis = 1, keepdims = True))
 
         return res
-    
 
 
-    def logistic_regression_classify(self, data):
-
-        predictions = self.sigmoid(data @ self.w)
-        predictions[predictions < 0.5] = 0
-        predictions[predictions >= 0.5] = 1
-        return predictions
-    
     def logistic_regression_classify_multi(self, data):
 
         predictions = self.f_softmax(data)
@@ -170,7 +128,6 @@ class LogisticRegression(object):
         acc = np.mean(labels_gt == labels_pred)
 
         return acc
-
 
 
     def predict(self, test_data):
@@ -188,7 +145,4 @@ class LogisticRegression(object):
         ###
         ##
 
-        if self.isBinary:
-            return self.logistic_regression_classify(test_data)
-        else:
-            return self.logistic_regression_classify_multi(test_data)
+        return self.logistic_regression_classify_multi(test_data)

@@ -109,7 +109,6 @@ def main(args):
             # different lr's which ones should we choose
             search_arg_vals = [1e-2, 1]
             # human poses
-            train_labels = train_regression_target
             search_arg_name = "lr"
 
         ##
@@ -127,8 +126,6 @@ def main(args):
         if args.method_name == "ridge_regression":
             train_data = append_bias_term(train_data)
             test_data = append_bias_term(test_data)
-        elif args.method_name == "logistic_regression":
-            train_labels
 
         # cross validation (MS1)
         if args.use_cross_validation:
