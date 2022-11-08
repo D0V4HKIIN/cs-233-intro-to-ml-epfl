@@ -137,9 +137,10 @@ class LogisticRegression(object):
     def f_softmax(self, data):
    
         res = np.zeros((data.shape[0], self.w.shape[1]))
+        denominator = np.sum(np.exp(data @ self.w), axis = 1).T
 
         for j in range(self.w.shape[1]):
-            res[::, j] = (np.exp(data @ self.w[::, j]) / np.sum(np.exp(data @ self.w), axis = 1)).T
+            res[::, j] = np.exp(data @ self.w[::, j]) / denominator
                 
         return res
     
