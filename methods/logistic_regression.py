@@ -22,7 +22,7 @@ class LogisticRegression(object):
         # YOUR CODE HERE!
         ###
         ##
-        self.task_kind = 'regression'
+        self.task_kind = 'classification'
         self.set_arguments(*args, **kwargs)
 
     def set_arguments(self, *args, **kwargs):
@@ -45,7 +45,7 @@ class LogisticRegression(object):
         # if not, then check if args is a list with size bigger than 1.
         elif len(args) > 0:
             self.lr = args[0]
-        # if there were no args or kwargs passed, we set the lr and max_iters to 0.03 and 500 respectively (default value).
+        # if there were no args or kwargs passed, we set the lr to 0.03 (default value).
         else:
             self.lr = 1e-3
 
@@ -54,7 +54,7 @@ class LogisticRegression(object):
         # if not, then check if args is a list with size bigger than 1.
         elif len(args) > 1:
             self.max_iters = args[1]
-        # if there were no args or kwargs passed, we set the lr and max_iters to 0.03 and 500 respectively (default value).
+        # if there were no args or kwargs passed, we set the max_iters to 500 (default value).
         else:
             self.max_iters = 500
         print("using lr:", self.lr, "and max_iters: ", self.max_iters)
@@ -128,8 +128,8 @@ class LogisticRegression(object):
         return grad_w
 
     def sigmoid(self, t):
-        print("sigmoid")
-        return 1 / (1 + np.exp(-t))
+        denominator = 1 + np.exp(-t)
+        return 1 / denominator
 
     def f_softmax(self, data):
         print("softmax")
