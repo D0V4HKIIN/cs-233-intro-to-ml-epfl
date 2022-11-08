@@ -81,7 +81,6 @@ def main(args):
         torch.save(results_class, "results_class.txt")
         torch.save(results_reg, "results_reg.txt")
 
-
     # classical ML methods (MS1 and MS2)
     # we first create the classification/regression objects
     # search_arg_vals and search_arg_name are defined for cross validation
@@ -97,15 +96,15 @@ def main(args):
             search_arg_vals = [1, 2, 3]
             train_labels = train_regression_target
             search_arg_name = "dummy_arg"
-        elif args.method_name == "ridge_regression":
+        elif args.method_name == 'ridge_regression':
             method_obj = LinearRegression(args.ridge_regression_lmda)
             # different lamda's which ones should we choose
             search_arg_vals = [0, 1e-2, 1e-1, 1]
             search_arg_name = "lmda"
             # human poses
             train_labels = train_regression_target
-        elif args.method_name == "logistic_regression":
-            method_obj = LogisticRegression(lr = args.lr, max_iters = args.max_iters)
+        elif args.method_name == 'logistic_regression':
+            method_obj = LogisticRegression(args.lr, args.max_iters)
             # different lr's which ones should we choose
             search_arg_vals = [1e-2, 1]
             # human poses
@@ -115,8 +114,8 @@ def main(args):
         ###
         # YOUR CODE HERE!
         ###
-        ##    
-        
+        ##
+
         def append_bias_term(X_train):
 
             ones_column = np.ones((X_train.shape[0], 1))

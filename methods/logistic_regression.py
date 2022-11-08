@@ -48,7 +48,6 @@ class LogisticRegression(object):
         # if there were no args or kwargs passed, we set the lr to 0.03 (default value).
         else:
             self.lr = 1e-3
-        
 
         if "max_iters" in kwargs:
             self.max_iters = kwargs["max_iters"]
@@ -59,15 +58,14 @@ class LogisticRegression(object):
         else:
             self.max_iters = 500
 
-        self.k = 4
-
 
     def fit(self, training_data, training_labels):
         """
             Trains the model, returns predicted labels for training data.
             Arguments:
                 training_data (np.array): training data of shape (N,D)
-                training_labels (np.array): regression target of shape (N,regression_target_size)
+                corrected this line according to https://edstem.org/eu/courses/171/discussion/4985
+                training_labels (np.array): regression target of shape (N,)
             Returns:
                 pred_labels (np.array): target of shape (N, )
         """
@@ -77,6 +75,9 @@ class LogisticRegression(object):
         # YOUR CODE HERE!
         ###
         ##
+
+        
+        self.k = label_to_onehot(training_labels).shape[1]
 
         self.logistic_regression_train_multi(training_data, training_labels)
 
@@ -100,7 +101,7 @@ class LogisticRegression(object):
     
 
     def gradient_logistic_multi(self, data, labels):
-    
+
         grad_w = data.T @ (self.f_softmax(data) - labels)
         return grad_w
 
@@ -115,20 +116,14 @@ class LogisticRegression(object):
 
 
     def logistic_regression_classify_multi(self, data):
+        predictions = np.argmax(self.f_softmax(data), axis=1)
 
-        predictions = self.f_softmax(data)
-        predictions = np.argmax(predictions, axis = 1)
-        
         return predictions
-
-
 
     def accuracy_fn(self, labels_gt, labels_pred):
 
         acc = np.mean(labels_gt == labels_pred)
-
         return acc
-
 
     def predict(self, test_data):
         """
