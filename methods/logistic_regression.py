@@ -47,7 +47,7 @@ class LogisticRegression(object):
             self.lr = args[0]
         # if there were no args or kwargs passed, we set the lr to 0.03 (default value).
         else:
-            self.lr = 3e-5
+            self.lr = 1e-3
         
 
         if "max_iters" in kwargs:
@@ -87,6 +87,9 @@ class LogisticRegression(object):
             self.w = np.random.normal(0., 0.1, (training_data.shape[1], num_classes))
             self.logistic_regression_train_multi(training_data, training_labels)
         
+        print("Data shape:", training_data.shape)
+        print("Labels shape:", training_labels.shape)
+        print("W shape:", self.w.shape)
 
         return self.predict(training_data)
 
@@ -109,15 +112,13 @@ class LogisticRegression(object):
 
         for it in range(self.max_iters):
 
-            print("in iter", it, "\n")
-
             gradient = self.gradient_logistic_multi(data, labels)
             self.w -= self.lr * gradient
 
             predictions = self.logistic_regression_classify_multi(data)
-            print("accuracy = ", self.accuracy_fn(np.argmax(labels, axis = 1), predictions), "\n")
+            if self.accuracy_fn(np.argmax(labels, axis = 1), predictions) == 1:
+                break
 
-        print("Finished training\n")
         return self.w
     
 
@@ -138,8 +139,6 @@ class LogisticRegression(object):
         return 1 / denominator
     
     def f_softmax(self, data):
-
-        print("in_softmax\n")
 
         auxMatrix = np.exp(data @ self.w)
         denominator = np.sum(auxMatrix, axis = 1, keepdims = True)
@@ -169,9 +168,6 @@ class LogisticRegression(object):
     def accuracy_fn(self, labels_gt, labels_pred):
 
         acc = np.mean(labels_gt == labels_pred)
-
-        print(labels_pred)
-        print(labels_gt)
 
         return acc
 

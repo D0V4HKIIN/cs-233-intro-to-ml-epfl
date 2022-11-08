@@ -127,6 +127,8 @@ def main(args):
         if args.method_name == "ridge_regression":
             train_data = append_bias_term(train_data)
             test_data = append_bias_term(test_data)
+        elif args.method_name == "logistic_regression":
+            train_labels
 
         # cross validation (MS1)
         if args.use_cross_validation:
