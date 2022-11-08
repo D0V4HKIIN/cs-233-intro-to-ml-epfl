@@ -47,7 +47,7 @@ class LogisticRegression(object):
             self.lr = args[0]
         # if there were no args or kwargs passed, we set the lr to 0.03 (default value).
         else:
-            self.lr = 1e-3
+            self.lr = 3e-5
         
 
         if "max_iters" in kwargs:
@@ -82,10 +82,10 @@ class LogisticRegression(object):
 
         if self.isBinary:
             self.w = np.random.normal(0., 0.1, [training_data.shape[1]])
-            self.w = self.logistic_regression_train(training_data, training_labels)
+            self.logistic_regression_train(training_data, training_labels)
         else:
             self.w = np.random.normal(0., 0.1, (training_data.shape[1], num_classes))
-            self.w = self.logistic_regression_train_multi(training_data, training_labels)
+            self.logistic_regression_train_multi(training_data, training_labels)
         
 
         return self.predict(training_data)
@@ -97,7 +97,7 @@ class LogisticRegression(object):
         for it in range(self.max_iters):
 
             gradient = self.gradient_logistic(data, labels)
-            self.w = self.w - self.lr * gradient
+            self.w -= self.lr * gradient
 
             predictions = self.logistic_regression_classify(data)
             if self.accuracy_fn(labels, predictions) == 1:
@@ -109,13 +109,15 @@ class LogisticRegression(object):
 
         for it in range(self.max_iters):
 
+            print("in iter", it, "\n")
+
             gradient = self.gradient_logistic_multi(data, labels)
-            self.w = self.w - self.lr * gradient
+            self.w -= self.lr * gradient
 
             predictions = self.logistic_regression_classify_multi(data)
-            if self.accuracy_fn(np.argmax(labels, axis = 1), predictions) == 1:
-                break
+            print("accuracy = ", self.accuracy_fn(np.argmax(labels, axis = 1), predictions), "\n")
 
+        print("Finished training\n")
         return self.w
     
 
@@ -136,13 +138,14 @@ class LogisticRegression(object):
         return 1 / denominator
     
     def f_softmax(self, data):
-   
-        res = np.zeros((data.shape[0], self.w.shape[1]))
-        denominator = np.sum(np.exp(data @ self.w), axis = 1).T
 
-        for j in range(self.w.shape[1]):
-            res[::, j] = np.exp(data @ self.w[::, j]) / denominator
-                
+        print("in_softmax\n")
+
+        auxMatrix = np.exp(data @ self.w)
+        denominator = np.sum(auxMatrix, axis = 1, keepdims = True)
+    
+        res = np.divide(auxMatrix, denominator)
+
         return res
     
 
@@ -166,6 +169,10 @@ class LogisticRegression(object):
     def accuracy_fn(self, labels_gt, labels_pred):
 
         acc = np.mean(labels_gt == labels_pred)
+
+        print(labels_pred)
+        print(labels_gt)
+
         return acc
 
 
