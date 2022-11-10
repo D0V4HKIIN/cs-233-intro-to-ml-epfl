@@ -57,7 +57,7 @@ class LogisticRegression(object):
         # if there were no args or kwargs passed, we set the max_iters to 500 (default value).
         else:
             self.max_iters = 500
-
+        print("using lr:", self.lr, "and max_iters:", self.max_iters)
 
     def fit(self, training_data, training_labels):
         """
@@ -76,21 +76,20 @@ class LogisticRegression(object):
         ###
         ##
 
-        
         self.k = label_to_onehot(training_labels).shape[1]
 
         self.logistic_regression_train_multi(training_data, training_labels)
 
         return self.predict(training_data)
 
-    
     def logistic_regression_train_multi(self, data, labels):
 
         self.w = np.random.normal(0., 0.1, (data.shape[1], self.k))
-        
+
         for it in range(self.max_iters):
 
-            gradient = self.gradient_logistic_multi(data, label_to_onehot(labels))
+            gradient = self.gradient_logistic_multi(
+                data, label_to_onehot(labels))
             self.w -= self.lr * gradient
 
             predictions = self.logistic_regression_classify_multi(data)
@@ -98,22 +97,19 @@ class LogisticRegression(object):
                 break
 
         return self.w
-    
 
     def gradient_logistic_multi(self, data, labels):
 
         grad_w = data.T @ (self.f_softmax(data) - labels)
         return grad_w
 
-    
     def f_softmax(self, data):
 
         auxMatrix = np.exp(data @ self.w)
-    
-        res = np.divide(auxMatrix, np.sum(auxMatrix, axis = 1, keepdims = True))
+
+        res = np.divide(auxMatrix, np.sum(auxMatrix, axis=1, keepdims=True))
 
         return res
-
 
     def logistic_regression_classify_multi(self, data):
         predictions = np.argmax(self.f_softmax(data), axis=1)

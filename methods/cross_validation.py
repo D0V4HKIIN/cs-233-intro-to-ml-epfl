@@ -24,7 +24,8 @@ def splitting_fn(data, labels, indices, fold_size, fold):
 
     # validation indicies of length fold_size
     # min is to not go outside of the array
-    val_indices = indices[(fold * fold_size): min(((fold + 1) * fold_size), data.shape[0] - 1)]
+    val_indices = indices[(fold * fold_size)
+                           : min(((fold + 1) * fold_size), data.shape[0] - 1)]
     # train indicies. The rest
     train_indices = np.setdiff1d(indices, val_indices)
 
@@ -102,5 +103,7 @@ def cross_validation(method_obj=None, search_arg_name=None, search_arg_vals=[], 
     best_param = find_param_ops(acc_list1)
     best_hyperparam = search_arg_vals[best_param]
     best_acc = acc_list1[best_param]
+
+    print(acc_list1)
 
     return best_hyperparam, best_acc

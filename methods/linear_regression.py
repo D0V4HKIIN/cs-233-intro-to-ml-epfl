@@ -49,6 +49,7 @@ class LinearRegression(object):
         else:
             print("using default values in linear regression")
             self.lmda = 0
+        print("using lambda", self.lmda)
 
     def fit(self, training_data, training_labels):
         """

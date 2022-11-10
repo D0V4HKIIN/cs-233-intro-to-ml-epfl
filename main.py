@@ -99,15 +99,14 @@ def main(args):
         elif args.method_name == 'ridge_regression':
             method_obj = LinearRegression(args.ridge_regression_lmda)
             # different lamda's which ones should we choose
-            search_arg_vals = [0, 1e-2, 1e-1, 1]
+            search_arg_vals = [0, 1e-1, 1, 10, 100]
             search_arg_name = "lmda"
             # human poses
             train_labels = train_regression_target
         elif args.method_name == 'logistic_regression':
             method_obj = LogisticRegression(args.lr, args.max_iters)
             # different lr's which ones should we choose
-            search_arg_vals = [1e-2, 1]
-            # human poses
+            search_arg_vals = [1e-8, 1e-7, 1e-6, 1e-5, 1e-4, 1e-3, 1e-2, 1e-1]
             search_arg_name = "lr"
 
         ##
@@ -121,7 +120,7 @@ def main(args):
             ones_column = np.ones((X_train.shape[0], 1))
             X_train_bias = np.concatenate((X_train, ones_column), axis=1)
             return X_train_bias
-        
+
         if args.method_name == "ridge_regression":
             train_data = append_bias_term(train_data)
             test_data = append_bias_term(test_data)
@@ -133,6 +132,7 @@ def main(args):
                 method_obj=method_obj, search_arg_name=search_arg_name, search_arg_vals=search_arg_vals, data=train_data, labels=train_labels, k_fold=4)
             # set the classifier/regression object to have the best hyperparameter found via cross validation:
             method_obj.set_arguments(best_arg)
+            print("best arg is", best_arg)
 
         # FIT AND PREDICT:
         method_obj.fit(train_data, train_labels)
