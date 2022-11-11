@@ -79,13 +79,16 @@ class LogisticRegression(object):
         self.k = label_to_onehot(training_labels).shape[1]
 
         if self.k == 2:
-            self.logistic_regression_classify(training_data, training_labels)
+            self.logistic_regression_train(training_data, training_labels)
         else:
-            self.logistic_regression_train_multi(training_data, training_labels)
+            self.logistic_regression_train_multi(
+                training_data, training_labels)
 
         return self.predict(training_data)
 
     def logistic_regression_train(self, data, labels):
+
+        self.w = np.random.normal(0., 0.1, [data.shape[1]])
 
         for it in range(self.max_iters):
 
@@ -132,6 +135,13 @@ class LogisticRegression(object):
         auxMatrix = np.exp(data @ self.w)
 
         return np.divide(auxMatrix, np.sum(auxMatrix, axis=1, keepdims=True))
+
+    def logistic_regression_classify(self, data):
+
+        predictions = self.sigmoid(data @ self.w)
+        predictions[predictions < 0.5] = 0
+        predictions[predictions >= 0.5] = 1
+        return predictions
 
     def logistic_regression_classify_multi(self, data):
         predictions = np.argmax(self.f_softmax(data), axis=1)
