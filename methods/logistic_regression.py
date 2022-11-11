@@ -82,14 +82,28 @@ class LogisticRegression(object):
 
         return self.predict(training_data)
 
+    def logistic_regression_train(self, data, labels):
+
+        for it in range(self.max_iters):
+
+            gradient = self.gradient_logistic(data, labels)
+            self.w -= self.lr * gradient
+
+            predictions = self.logistic_regression_classify(data)
+            if self.accuracy_fn(labels, predictions) == 1:
+                break
+
+        return self.w
+
     def logistic_regression_train_multi(self, data, labels):
 
         self.w = np.random.normal(0., 0.1, (data.shape[1], self.k))
 
+        onehot_labels = label_to_onehot(labels)
+
         for it in range(self.max_iters):
 
-            gradient = self.gradient_logistic_multi(
-                data, label_to_onehot(labels))
+            gradient = self.gradient_logistic_multi(data, onehot_labels)
             self.w -= self.lr * gradient
 
             predictions = self.logistic_regression_classify_multi(data)
@@ -98,18 +112,23 @@ class LogisticRegression(object):
 
         return self.w
 
+    def gradient_logistic(self, data, labels):
+        return data.T @ (self.sigmoid(data @ self.w) - labels)
+
     def gradient_logistic_multi(self, data, labels):
 
         grad_w = data.T @ (self.f_softmax(data) - labels)
         return grad_w
 
+    def sigmoid(self, t):
+        denominator = 1 + np.exp(-t)
+        return 1 / denominator
+
     def f_softmax(self, data):
 
         auxMatrix = np.exp(data @ self.w)
 
-        res = np.divide(auxMatrix, np.sum(auxMatrix, axis=1, keepdims=True))
-
-        return res
+        return np.divide(auxMatrix, np.sum(auxMatrix, axis=1, keepdims=True))
 
     def logistic_regression_classify_multi(self, data):
         predictions = np.argmax(self.f_softmax(data), axis=1)
