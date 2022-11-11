@@ -78,7 +78,10 @@ class LogisticRegression(object):
 
         self.k = label_to_onehot(training_labels).shape[1]
 
-        self.logistic_regression_train_multi(training_data, training_labels)
+        if self.k == 2:
+            self.logistic_regression_classify(training_data, training_labels)
+        else:
+            self.logistic_regression_train_multi(training_data, training_labels)
 
         return self.predict(training_data)
 
@@ -155,4 +158,7 @@ class LogisticRegression(object):
         ###
         ##
 
-        return self.logistic_regression_classify_multi(test_data)
+        if self.k == 2:
+            return self.logistic_regression_classify(test_data)
+        else:
+            return self.logistic_regression_classify_multi(test_data)
