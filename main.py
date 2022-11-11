@@ -99,7 +99,7 @@ def main(args):
         elif args.method_name == 'ridge_regression':
             method_obj = LinearRegression(args.ridge_regression_lmda)
             # different lamda's which ones should we choose
-            search_arg_vals = [0, 1e-1, 1, 10, 100, 1000, 10000]
+            search_arg_vals = [0, 1e-1, 1, 10, 100, 200, 250, 300, 1000, 10000]
             search_arg_name = "lmda"
             # human poses
             train_labels = train_regression_target
