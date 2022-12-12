@@ -17,6 +17,8 @@ class PCA(object):
         #the principal components (will be computed from the training data and saved to this variable)
         self.W = None
 
+        self.X_tilde = None
+
     def set_arguments(self, *args, **kwargs):
         """
             args and kwargs are super easy to use! See dummy_methods.py
@@ -28,6 +30,15 @@ class PCA(object):
         #### YOUR CODE HERE! 
         ###
         ##
+
+        if "dims" in kwargs:
+            self.d = kwargs["dims"]
+        elif len(args) > 0:
+            self.d = args[0]
+        else:
+            print("using default values in pca")
+            self.d = 5
+        print("using dims", self.d)
 
     def find_principal_components(self, training_data):
         """
@@ -48,6 +59,32 @@ class PCA(object):
         ###
         ##
 
+        # Compute the mean of data
+        self.mean = np.mean(training_data, axis=0)
+
+        # Center the data with the mean
+        X_tilde = training_data - self.mean
+
+        # Create the covariance matrix
+        C = (1 / training_data.shape[0]) * (X_tilde.T @ X_tilde)
+
+        # Compute the eigenvectors and eigenvalues. Hint: use np.linalg.eigh
+        eigvals, eigvecs = np.linalg.eigh(C)
+
+        # Choose the top d eigenvalues and corresponding eigenvectors.
+        # Sort the eigenvalues(with corresponding eigenvectors) in decreasing order first.
+        sorted_index_array = np.flip(np.argsort(eigvals))
+        eigvals = eigvals[sorted_index_array]
+        eigvecs = eigvecs[::, sorted_index_array]
+
+        # Create matrix W and the corresponding eigen values
+        self.W = eigvecs[::, :self.d]
+        eg = eigvals[:self.d]
+
+        
+        # Compute the explained variance
+        exvar = np.sum(eg) / np.sum(eigvals)
+
         return exvar
 
     def reduce_dimension(self, data):
@@ -65,7 +102,11 @@ class PCA(object):
         #### YOUR CODE HERE! 
         ###
         ##
+
+        # Center the data with the mean
+        X_tilde = data - self.mean
         
-        return data_reduced
+        # project the data using W
+        return X_tilde @ self.W
         
 

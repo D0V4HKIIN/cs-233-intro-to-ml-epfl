@@ -17,6 +17,9 @@ class KNN(object):
         #### YOUR CODE HERE! 
         ###
         ##
+        
+        self.task_kind = 'classification'
+        self.set_arguments(*args, **kwargs)
 
     def set_arguments(self, *args, **kwargs):
         """
