@@ -24,7 +24,7 @@ def main(args):
         test_dataset = H36M_Dataset(
             split="test", path_to_data=args.path_to_data, means=train_dataset.means, stds=train_dataset.stds)
         # uncomment for MS2
-        #val_dataset = H36M_Dataset(split="val",path_to_data=args.path_to_data, means=train_dataset.means, stds=train_dataset.stds)
+        val_dataset = H36M_Dataset(split="val",path_to_data=args.path_to_data, means=train_dataset.means, stds=train_dataset.stds)
 
     elif args.dataset == "music":
         train_dataset = FMA_Dataset(
@@ -32,7 +32,7 @@ def main(args):
         test_dataset = FMA_Dataset(split="test", path_to_data=args.path_to_data,
                                    means=train_dataset.means, stds=train_dataset.stds)
         # uncomment for MS2
-        #val_dataset = FMA_Dataset(split="val",path_to_data=args.path_to_data, means=train_dataset.means, stds=train_dataset.stds)
+        val_dataset = FMA_Dataset(split="val",path_to_data=args.path_to_data, means=train_dataset.means, stds=train_dataset.stds)
 
     elif args.dataset == "movies":
         train_dataset = Movie_Dataset(
@@ -40,7 +40,7 @@ def main(args):
         test_dataset = Movie_Dataset(
             split="test", path_to_data=args.path_to_data, means=train_dataset.means, stds=train_dataset.stds)
         # uncomment for MS2
-        #val_dataset = Movie_Dataset(split="val", path_to_data=args.path_to_data, means=train_dataset.means, stds=train_dataset.stds)
+        val_dataset = Movie_Dataset(split="val", path_to_data=args.path_to_data, means=train_dataset.means, stds=train_dataset.stds)
 
     # Note: We only use the following methods for more old-school methods, not the nn!
     train_data, train_regression_target, train_labels = train_dataset.data, train_dataset.regression_target, train_dataset.labels
@@ -71,15 +71,14 @@ def main(args):
             test_dataset, batch_size=32, shuffle=False)
 
         # create model
-        model = SimpleNetwork(input_size=train_dataset.feature_dim, num_classes=train_dataset.num_classes,
-                              regression_output_size=train_dataset.regression_target_size)
+        model = SimpleNetwork(input_size=train_dataset.feature_dim, num_classes=train_dataset.num_classes)
 
         # training loop
         trainer = Trainer(model, lr=args.lr, epochs=args.max_iters)
         trainer.train_all(train_dataloader, val_dataloader)
-        results_class, results_reg = trainer.eval(test_dataloader)
+        results_class = trainer.eval(test_dataloader)
         torch.save(results_class, "results_class.txt")
-        torch.save(results_reg, "results_reg.txt")
+
 
     # classical ML methods (MS1 and MS2)
     # we first create the classification/regression objects

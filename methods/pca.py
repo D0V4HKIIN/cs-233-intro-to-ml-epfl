@@ -73,15 +73,13 @@ class PCA(object):
 
         # Choose the top d eigenvalues and corresponding eigenvectors.
         # Sort the eigenvalues(with corresponding eigenvectors) in decreasing order first.
-        sorted_index_array = np.flip(np.argsort(eigvals))
-        eigvals = eigvals[sorted_index_array]
-        eigvecs = eigvecs[::, sorted_index_array]
+        eigvals = np.flip(eigvals)
+        eigvecs = np.flip(eigvecs, 1)
 
         # Create matrix W and the corresponding eigen values
         self.W = eigvecs[::, :self.d]
         eg = eigvals[:self.d]
 
-        
         # Compute the explained variance
         exvar = np.sum(eg) / np.sum(eigvals)
 
