@@ -85,7 +85,8 @@ class PCA(object):
         # Compute the explained variance
         exvar = np.sum(eg) / np.sum(eigvals)
 
-        return exvar
+        # needs to return a percentage, thus the x100
+        return exvar * 100
 
     def reduce_dimension(self, data):
         """
