@@ -71,13 +71,13 @@ def main(args):
             test_dataset, batch_size=32, shuffle=False)
 
         # create model
-        model = SimpleNetwork(input_size=train_dataset.feature_dim, num_classes=train_dataset.num_classes)
+        model = SimpleNetwork(input_size=train_dataset.feature_dim, num_classes=train_dataset.num_classes, hidden_size=75)
 
         # training loop
         trainer = Trainer(model, lr=args.lr, epochs=args.max_iters)
         trainer.train_all(train_dataloader, val_dataloader)
         results_class = trainer.eval(test_dataloader)
-        torch.save(results_class, "results_class.txt")
+        np.save("results_class", results_class.numpy())
 
 
     # classical ML methods (MS1 and MS2)
@@ -107,6 +107,8 @@ def main(args):
             # different lr's which ones should we choose
             search_arg_vals = [1e-8, 1e-7, 1e-6, 1e-5, 1e-4, 1e-3, 1e-2, 1e-1]
             search_arg_name = "lr"
+        elif args.method_name == 'knn':
+            method_obj = KNN(args.knn_neighbours)
 
         ##
         ###

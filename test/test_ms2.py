@@ -192,9 +192,9 @@ class TestProject(unittest.TestCase):
             output_class = simple_network(x)
         self.assertIsInstance(output_class, torch.Tensor, f"deep_network.SimpleNetwork.fit() should output a tensor, not {type(output_class)}")
         self.assertEqual(output_class.shape, (bs, C), f"deep_network.SimpleNetwork.fit() output has wrong shape ({output_class.shape} != {(bs, C)})")
-        with no_print():
-            trainer.train_all(dataloader_train, dataloader_val)
-            results_class = trainer.eval(dataloader_val)
+        # with no_print():
+        trainer.train_all(dataloader_train, dataloader_val)
+        results_class = trainer.eval(dataloader_val)
         self.assertIsInstance(results_class, torch.Tensor, f"deep_network.Trainer.eval() should output a tensor, not {type(results_class)}")
         self.assertEqual(results_class.shape, (N,), f"deep_network.Trainer.eval() output has wrong shape ({results_class.shape} != {(N,)})")
 

@@ -1,7 +1,9 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+import numpy as np
 from metrics import accuracy_fn, macrof1_fn
+
 
 ## MS2!!
 
@@ -19,6 +21,9 @@ class SimpleNetwork(nn.Module):
         ###
         ##
 
+        self.fc1 = nn.Linear(input_size, hidden_size)
+        self.fc2 = nn.Linear(hidden_size, num_classes)
+
     def forward(self, x):
         """
         Takes as input the data x and outputs the 
@@ -34,8 +39,11 @@ class SimpleNetwork(nn.Module):
         #### YOUR CODE HERE! 
         ###
         ##
+        
+        x = F.relu(self.fc1(x))
+        x = self.fc2(x)
 
-        return output_class
+        return x
 
 class Trainer(object):
 
@@ -82,6 +90,29 @@ class Trainer(object):
         #### YOUR CODE HERE! 
         ###
         ##
+         
+        # Training.
+        self.model.train()
+        
+        for it, batch in enumerate(dataloader):
+            # 5.1 Load a batch, break it down in images and targets.
+            x, _, y = batch
+
+             # 5.2 Run forward pass.
+            logits = self.model.forward(x)  # YOUR CODE HERE
+            
+            # 5.3 Compute loss (using 'criterion').
+            loss = self.classification_criterion(logits, y)  # YOUR CODE HERE
+            
+            # 5.4 Run backward pass.
+            loss.backward()  # YOUR CODE HERE
+            
+            # 5.5 Update the weights using optimizer.
+            self.optimizer.step()  # YOUR CODE HERE
+            
+            # 5.6 Zero-out the accumulated gradients.
+            self.optimizer.zero_grad()  # YOUR CODE HERE
+        
 
     def eval(self, dataloader):
         """
@@ -99,5 +130,26 @@ class Trainer(object):
         #### YOUR CODE HERE! 
         ###
         ##
-        
-        return results_class
+
+        self.model.eval()
+
+        with torch.no_grad():
+            predictions = torch.Tensor()
+            acc_run_fn = 0
+            acc_run_f1 = 0
+            for batch in dataloader:
+                # Get batch of data.
+                x, _, y = batch
+                x_predictions = torch.argmax(F.softmax(self.model.forward(x), dim = 1), axis = 1)
+                predictions = torch.cat((predictions, x_predictions))
+                curr_bs = x.shape[0]
+                acc_run_fn += accuracy_fn(x_predictions.tolist(), y.tolist()) * curr_bs
+                acc_run_f1 += macrof1_fn(x_predictions.tolist(), y.tolist()) * curr_bs
+            
+            acc_fn = acc_run_fn / len(dataloader.dataset)
+            acc_f1 = acc_run_f1 / len(dataloader.dataset)
+
+        print("Accuracy fn: " + str(acc_fn))
+        print("Macro f1: " + str(acc_f1))
+
+        return predictions

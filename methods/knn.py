@@ -39,6 +39,7 @@ class KNN(object):
         else:
             print("using default values in knn")
             self.k = 100
+        print("using k = " + str(self.k))
 
     
 
@@ -63,10 +64,11 @@ class KNN(object):
         ###
         ##
 
-        self.training_data = training_data
-        self.traning_labels = training_labels
+        self.training_labels = training_labels
 
-        self.training_data = self.normalize()
+        self.means = training_data.mean(axis = 0, keepdims = True)
+        self.stds  = training_data.std(axis = 0, keepdims = True)
+        self.training_data = self.normalize(training_data)
 
         return self.predict(training_data)
                                
@@ -84,9 +86,10 @@ class KNN(object):
         #### YOUR CODE HERE! 
         ###
         ##
-        return test_labels
+
+        return self.kNN(self.normalize(test_data))
     
-    def normalize(self):
+    def normalize(self, data):
         """This function takes the data, the means,
         and the standard deviatons(precomputed). It 
         returns the normalized data.
@@ -101,13 +104,10 @@ class KNN(object):
         """
         # WRITE YOUR CODE HERE
         # return the normalized features
-
-        means = self.training_data.mean(axis = 0, keepdims = True)
-        stds  = self.training_data.std(axis = 0, keepdims = True)
         
-        return (self.training_data - means) / stds
+        return (data - self.means) / self.stds
 
-    def euclidean_dist(example, training_examples):
+    def euclidean_dist(self, example):
         """function to compute the Euclidean distance between a single example
         vector and all training_examples
 
@@ -119,7 +119,7 @@ class KNN(object):
         """
         
         # WRITE YOUR CODE HERE
-        return np.sqrt(np.sum((training_examples - example.T) ** 2, axis = 1))
+        return np.sqrt(np.sum(np.square(example - self.training_data), axis=1))
 
     def find_k_nearest_neighbors(self, distances):
         """ Find the indices of the k smallest distances from a list of distances.
@@ -131,38 +131,36 @@ class KNN(object):
         
         return indices
 
-    def kNN_one_example(self, unlabeled_example, training_features, training_labels, k):
+    def kNN_one_example(self, unlabeled_example):
         """returns the label of single unlabelled_example.
         """
         
         # WRITE YOUR CODE HERE
         
         # Compute distances
-        distances = self.euclidean_dist(unlabeled_example.T, training_features)
+        distances = self.euclidean_dist(unlabeled_example.T)
         
         # Find neighbors
-        nn_indices = self.find_k_nearest_neighbors(k, distances)
+        nn_indices = self.find_k_nearest_neighbors(distances)
         
         # Get neighbors' labels
-        neighbor_labels = [training_labels[xi] for xi in nn_indices]
+        neighbor_labels = self.training_labels[nn_indices]
         
         # Pick the most common
         best_label = self.predict_label(neighbor_labels)
         
         return best_label
 
-    def predict_label(neighbor_labels):
+    def predict_label(self, neighbor_labels):
         """return the most frequent element in the input.
         """
         # WRITE YOUR CODE HERE
         return np.argmax(np.bincount(neighbor_labels))
     
-    def kNN(self, unlabeled, training_features, training_labels, k):
+    def kNN(self, unlabeled):
         """return the labels vector for all unlabeled datapoints.
         """
         
         # WRITE YOUR CODE HERE
         
-        return np.apply_along_axis(self.kNN_one_example, 1, unlabeled, training_features, training_labels, k)
-
-
+        return np.apply_along_axis(self.kNN_one_example, 1, unlabeled)
