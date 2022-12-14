@@ -32,6 +32,13 @@ class KNN(object):
         #### YOUR CODE HERE! 
         ###
         ##
+        if "k" in kwargs:
+            self.k = kwargs["dims"]
+        elif len(args) > 0:
+            self.k = args[0]
+        else:
+            print("using default values in knn")
+            self.d = 100
 
     
 
@@ -55,6 +62,10 @@ class KNN(object):
         #### YOUR CODE HERE! 
         ###
         ##
+
+        self.training_data = training_data
+        self.traning_labels = training_labels
+
         return pred_labels
                                
     def predict(self, test_data):
@@ -72,3 +83,45 @@ class KNN(object):
         ###
         ##
         return test_labels
+    
+    def normalize(data, means, stds):
+        """This function takes the data, the means,
+        and the standard deviatons(precomputed). It 
+        returns the normalized data.
+        
+        Inputs:
+            data : shape (NxD)
+            means: shape (1XD)
+            stds : shape (1xD)
+            
+        Outputs:
+            data_normed: shape (NxD)
+        """
+        # WRITE YOUR CODE HERE
+        # return the normalized features
+        
+        return (data - means) / stds
+
+    def euclidean_dist(example, training_examples):
+        """function to compute the Euclidean distance between a single example
+        vector and all training_examples
+
+        Inputs:
+            example: shape (D,)
+            training_examples: shape (NxD) 
+        Outputs:
+            return distance vector of length N
+        """
+        
+        # WRITE YOUR CODE HERE
+        return np.sqrt(np.sum((training_examples - example.T) ** 2, axis = 1))
+
+    def find_k_nearest_neighbors(k, distances):
+        """ Find the indices of the k smallest distances from a list of distances.
+            Tip: use np.argsort()
+        """
+        
+        # WRITE YOUR CODE HERE
+        indices = np.argsort(distances)[:k]
+        
+        return indices
