@@ -33,12 +33,12 @@ class KNN(object):
         ###
         ##
         if "k" in kwargs:
-            self.k = kwargs["dims"]
+            self.k = kwargs["k"]
         elif len(args) > 0:
             self.k = args[0]
         else:
             print("using default values in knn")
-            self.d = 100
+            self.k = 100
 
     
 
@@ -66,7 +66,7 @@ class KNN(object):
         self.training_data = training_data
         self.traning_labels = training_labels
 
-        return pred_labels
+        return self.predict(training_data)
                                
     def predict(self, test_data):
         """
