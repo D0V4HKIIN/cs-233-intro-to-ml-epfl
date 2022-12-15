@@ -105,9 +105,9 @@ class PCA(object):
         print("reducing on some data of shape", data.shape)
 
         # Center the data with the mean
-        X_tilde = data - self.mean
+        X_tilde = data - self.mean[:data.shape[1]]
 
         print(X_tilde.shape, self.W.shape)
         
         # project the data using W
-        return X_tilde @ self.W
+        return X_tilde @ self.W[:data.shape[1]]
