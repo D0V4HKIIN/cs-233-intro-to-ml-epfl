@@ -21,8 +21,17 @@ class SimpleNetwork(nn.Module):
         ###
         ##
 
-        self.fc1 = nn.Linear(input_size, hidden_size)
-        self.fc2 = nn.Linear(hidden_size, num_classes)
+
+        smaller_layer = int(input_size / 20)
+        small_hidden = int(hidden_size / 2)
+
+        print(input_size, smaller_layer, hidden_size * 2, hidden_size, small_hidden, num_classes)
+
+        self.fc1 = nn.Linear(input_size, smaller_layer)
+        self.fc2 = nn.Linear(smaller_layer, hidden_size * 2)
+        self.fc3 = nn.Linear(hidden_size * 2, hidden_size)
+        self.fc4 = nn.Linear(hidden_size, small_hidden)
+        self.fc5 = nn.Linear(small_hidden, num_classes)
 
     def forward(self, x):
         """
@@ -41,7 +50,10 @@ class SimpleNetwork(nn.Module):
         ##
         
         x = F.relu(self.fc1(x))
-        x = self.fc2(x)
+        x = F.relu(self.fc2(x))
+        x = F.relu(self.fc3(x))
+        x = F.relu(self.fc4(x))
+        x = self.fc5(x)
 
         return x
 
@@ -140,11 +152,12 @@ class Trainer(object):
             for batch in dataloader:
                 # Get batch of data.
                 x, _, y = batch
-                x_predictions = torch.argmax(F.softmax(self.model.forward(x), dim = 1), axis = 1)
+                x_predictions = torch.argmax(F.softmax(self.model(x), dim = 1), axis = 1)
                 predictions = torch.cat((predictions, x_predictions))
                 curr_bs = x.shape[0]
-                acc_run_fn += accuracy_fn(x_predictions.tolist(), y.tolist()) * curr_bs
-                acc_run_f1 += macrof1_fn(x_predictions.tolist(), y.tolist()) * curr_bs
+                # print(x_predictions.numpy().shape, y.numpy().shape)
+                acc_run_fn += accuracy_fn(x_predictions.numpy(), y.numpy()) * curr_bs
+                acc_run_f1 += macrof1_fn(x_predictions.numpy(), y.numpy()) * curr_bs
             
             acc_fn = acc_run_fn / len(dataloader.dataset)
             acc_f1 = acc_run_f1 / len(dataloader.dataset)

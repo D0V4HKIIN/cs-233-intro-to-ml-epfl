@@ -1,4 +1,4 @@
-python main.py --dataset="h36m" --path_to_data=. --method_name="nn" --lr=1e-3 --use_pca
+python main.py --dataset="h36m" --path_to_data=. --method_name="nn" --lr=1e-3 # --use_pca
 #--use_cross_validation
 # echo "----------  ridge ----------"
 # # python3 main.py --dataset="h36m" --path_to_data=. --method_name="ridge_regression" --use_cross_validation
