@@ -3,6 +3,7 @@ import argparse
 
 # these will be imported in MS2. uncomment then!
 import torch
+import time
 from torch.utils.data import DataLoader
 from methods.deep_network import SimpleNetwork, Trainer
 
@@ -116,6 +117,8 @@ def main(args):
         ###
         ##
 
+        beginningTime = time.time()
+
         def append_bias_term(X_train):
 
             ones_column = np.ones((X_train.shape[0], 1))
@@ -147,6 +150,8 @@ def main(args):
             print("Final classification accuracy is", acc)
             macrof1 = macrof1_fn(pred_labels, test_labels)
             print("Final macro F1 score is", macrof1)
+
+        print("Total time without PCA: ", time.time() - beginningTime)
 
 
 if __name__ == '__main__':
