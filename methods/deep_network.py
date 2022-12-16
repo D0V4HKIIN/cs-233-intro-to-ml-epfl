@@ -22,16 +22,21 @@ class SimpleNetwork(nn.Module):
         ##
 
 
-        smaller_layer = int(input_size / 20)
-        small_hidden = int(hidden_size / 2)
+        # smaller_layer = int(input_size / 20)
+        # small_hidden = int(hidden_size / 2)
 
-        print(input_size, smaller_layer, hidden_size * 2, hidden_size, small_hidden, num_classes)
+        # print(input_size, smaller_layer, hidden_size * 2, hidden_size, small_hidden, num_classes)
 
-        self.fc1 = nn.Linear(input_size, smaller_layer)
-        self.fc2 = nn.Linear(smaller_layer, hidden_size * 2)
-        self.fc3 = nn.Linear(hidden_size * 2, hidden_size)
-        self.fc4 = nn.Linear(hidden_size, small_hidden)
-        self.fc5 = nn.Linear(small_hidden, num_classes)
+        print(input_size, hidden_size * 4, hidden_size, num_classes)
+        self.fc1 = nn.Linear(input_size, hidden_size * 4)
+        self.fc2 = nn.Linear(hidden_size * 4, hidden_size)
+        self.fc3 = nn.Linear(hidden_size, num_classes)
+        
+        # self.fc1 = nn.Linear(input_size, smaller_layer)
+        # self.fc2 = nn.Linear(smaller_layer, hidden_size * 2)
+        # self.fc3 = nn.Linear(hidden_size * 2, hidden_size)
+        # self.fc4 = nn.Linear(hidden_size, small_hidden)
+        # self.fc5 = nn.Linear(small_hidden, num_classes)
 
     def forward(self, x):
         """
@@ -49,11 +54,16 @@ class SimpleNetwork(nn.Module):
         ###
         ##
         
+
         x = F.relu(self.fc1(x))
         x = F.relu(self.fc2(x))
-        x = F.relu(self.fc3(x))
-        x = F.relu(self.fc4(x))
-        x = self.fc5(x)
+        x = self.fc3(x)
+
+        # x = F.relu(self.fc1(x))
+        # x = F.relu(self.fc2(x))
+        # x = F.relu(self.fc3(x))
+        # x = F.relu(self.fc4(x))
+        # x = self.fc5(x)
 
         return x
 

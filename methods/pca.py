@@ -59,7 +59,7 @@ class PCA(object):
         ###
         ##
 
-        print(training_data.shape)
+        print("training_data shape: ", training_data.shape)
         # Compute the mean of data
         self.mean = np.mean(training_data, axis=0)
 
@@ -102,12 +102,9 @@ class PCA(object):
         #### YOUR CODE HERE! 
         ###
         ##
-        print("reducing on some data of shape", data.shape)
 
         # Center the data with the mean
-        X_tilde = data - self.mean[:data.shape[1]]
-
-        print(X_tilde.shape, self.W.shape)
+        X_tilde = data - self.mean
         
         # project the data using W
-        return X_tilde @ self.W[:data.shape[1]]
+        return X_tilde @ self.W
